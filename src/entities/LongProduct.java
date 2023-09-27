@@ -1,37 +1,39 @@
 package entities;
 
+import java.util.Date;
+
 /**
  *
  * @author Bùi Đức Triệu
  */
 public class LongProduct extends Product {
-    private String manufacturingDate;
-    private String expirationDate;
+    private Date manufacturingDate;
+    private Date expirationDate;
     private String supplier;
 
     public LongProduct() {
     }
 
-    public LongProduct(String manufacturingDate, String expirationDate,String sup, String code, String name, int quantity, String type) {
+    public LongProduct(Date manufacturingDate, Date expirationDate, String supplier, String code, String name, int quantity, String type) {
         super(code, name, quantity, type);
         this.manufacturingDate = manufacturingDate;
         this.expirationDate = expirationDate;
-        this.supplier = sup;
+        this.supplier = supplier;
     }
 
-    public String getManufacturingDate() {
+    public Date getManufacturingDate() {
         return manufacturingDate;
     }
 
-    public void setManufacturingDate(String manufacturingDate) {
+    public void setManufacturingDate(Date manufacturingDate) {
         this.manufacturingDate = manufacturingDate;
     }
 
-    public String getExpirationDate() {
+    public Date getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
     }
 

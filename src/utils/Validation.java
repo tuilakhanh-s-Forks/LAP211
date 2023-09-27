@@ -17,6 +17,8 @@ import java.util.Scanner;
 public class Validation implements IValidation{
 
     private Scanner sc = new Scanner(System.in);
+    private static final String DATE_FORMAT = "MM/dd/yyyy";
+    private static final DateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
     
     @Override
     public String inputAndCheckString(String msg, Status status) {
@@ -54,40 +56,37 @@ public class Validation implements IValidation{
     }
 
     @Override
-    public String checkBeforeDate(String msg, Status status) {
-        String dateFormat = "MM/dd/yyyy";
-        DateFormat sdf = new SimpleDateFormat(dateFormat);
-        sdf.setLenient(false);
+    public Date checkBeforeDate(String msg, Status status) {
+        DATE_FORMATTER.setLenient(false);
         while (true) {
             String dateStr = inputAndCheckString(msg,status);
+            if (dateStr.isBlank()) {
+                return null; // Return null if the input is blank
+            }
             try {
-                sdf.parse(dateStr);
-                return dateStr;
+                Date date = DATE_FORMATTER.parse(dateStr);
+                return date;
             } catch (ParseException e) {
-                System.err.println("Incorrect date must input by format MM/dd/yyyy ! Please enter again !");
+                System.err.println("Incorrect date. Please enter a valid date in the format MM/dd/yyyy.");
             }
         }
 
     }
 
     @Override
-    public String checkAfterDate(String msg, String productionDate, Status status) {
+    public Date checkAfterDate(String msg, Date productionDate, Status status) {
         String dateFormat = "MM/dd/yyyy";
         DateFormat sdf = new SimpleDateFormat(dateFormat);
         sdf.setLenient(false);
         while (true) {
-            String initDate = checkBeforeDate(msg,status);
-            try {
-                Date d1 = sdf.parse(initDate);
-                Date d2 = sdf.parse(productionDate);
-                    
-                if (d1.compareTo(d2) < 0) {
-                    System.out.println("Expiration date must be after production date. Please enter again.");
-                } else {
-                    return initDate;
-                }
-            } catch (ParseException ex) {
-                continue;
+            Date initDate = checkBeforeDate(msg, status);
+            if (initDate == null) {
+                return null; // Return null if the initial date is blank
+            }
+            if (initDate.compareTo(productionDate) >= 0) {
+                return initDate;
+            } else {
+                System.out.println("Expiration date must be after production date. Please enter again.");
             }
         }
     }
@@ -258,10 +257,10 @@ public class Validation implements IValidation{
         if (oldProduct instanceof LongProduct && newProduct instanceof LongProduct) {
             LongProduct newLongProduct = (LongProduct) newProduct;
             LongProduct oldLongProduct = (LongProduct) oldProduct;
-            if(newLongProduct.getManufacturingDate().isBlank()) {
+            if(newLongProduct.getManufacturingDate() == null) {
                 newLongProduct.setManufacturingDate(oldLongProduct.getManufacturingDate());
             }
-            if(newLongProduct.getExpirationDate().isBlank()) {
+            if(newLongProduct.getExpirationDate() == null) {
                 newLongProduct.setExpirationDate(oldLongProduct.getExpirationDate());
             }
         }
