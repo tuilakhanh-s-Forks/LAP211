@@ -16,6 +16,7 @@ public class Program {
         do {
             System.out.println("====== STORE MANAGEMENT ======");
             choice = Menu.getChoice(Menu.STORE_MENU);
+            System.out.println("==============================");
             
             switch (choice) {
                 case 1:
