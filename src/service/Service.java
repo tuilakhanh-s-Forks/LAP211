@@ -13,6 +13,7 @@ import java.util.Date;
 import report.Report;
 import utils.FileManager;
 import entities.Status;
+import java.util.Optional;
 import utils.Validation;
 
 /**
@@ -89,14 +90,14 @@ public class Service implements IService {
             return;
         }
         //  only remove the product from the store's list when the import / export information for this product has not been generated.
-//        boolean productExistsInReceipt = warehouseManage.getProductInWareHouse(productToDelete) != null;
-//        if (productExistsInReceipt) {
-//            System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
-//            return;
-//        }
-//        if(!valid.checkYesOrNo("Are you sure you want to delete this product? (Y/N): ")){
-//            return;
-//        }
+        boolean productExistsInReceipt = wareHouseController.isProductExist(code);
+        if (productExistsInReceipt) {
+            System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
+            return;
+        }
+        if(!valid.checkYesOrNo("Are you sure you want to delete this product? (Y/N): ")){
+            return;
+        }
         // Remove the product from the list
         boolean removalSuccess = productController.deleteProduct(productToDelete);
 
@@ -109,7 +110,7 @@ public class Service implements IService {
 
     @Override
     public void showAllProduct() {
-        boolean option = valid.checkFileOrCollection("Do you want show by file or collection (F/C)");
+        boolean option = valid.checkFileOrCollection("Do you want show by file or collection (F/C): ");
         productController.showAllProduct(option);
     }
     

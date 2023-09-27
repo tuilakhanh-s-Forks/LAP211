@@ -53,6 +53,9 @@ public class WareHouseController implements IWareHouseController {
     
     @Override
     public boolean isProductExist(String productCode) {
+        if (wareHouseList.isEmpty()) {
+            return false;
+        }
         for(WareHouse wareHouse: wareHouseList){
             for(Product product: wareHouse.getListProduct()){
                 if(product.getCode().equalsIgnoreCase(productCode)){
