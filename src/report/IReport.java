@@ -4,7 +4,7 @@ import entities.Product;
 import entities.WareHouse;
 import java.util.List;
 import controller.ProductController;
-import controller.WareHouseManage;
+import controller.WareHouseController;
 
 /**
  *
@@ -18,6 +18,6 @@ public interface IReport {
 
     List<Product> showProductRunningOut(List<Product> listProduct);
 
-    Product showReceiptProduct(String code,ProductController pm,WareHouseManage whm);
+    Product showReceiptProduct(String code,ProductController pm,WareHouseController whm);
 
 }

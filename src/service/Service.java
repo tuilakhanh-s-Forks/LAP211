@@ -4,17 +4,15 @@ import entities.DailyProduct;
 import entities.LongProduct;
 import entities.Product;
 import entities.WareHouse;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import controller.ProductController;
-import controller.WareHouseManage;
+import controller.WareHouseController;
 import entities.TradeType;
 import java.util.Date;
 import report.Report;
-import utils.FileManage;
-import utils.Status;
+import utils.FileManager;
+import entities.Status;
 import utils.Validation;
 
 /**
@@ -23,16 +21,16 @@ import utils.Validation;
  */
 public class Service implements IService {
 
-    private final FileManage fm;
-    private final ProductController productManage;
-    private final WareHouseManage wareHouseManage;
+    private final FileManager fm;
+    private final ProductController productController;
+    private final WareHouseController wareHouseController;
     private final Validation valid;
     private final Report report;
 
     public Service() {
-        fm = new FileManage();
-        productManage = new ProductController();
-        wareHouseManage = new WareHouseManage();
+        fm = new FileManager();
+        productController = new ProductController();
+        wareHouseController = new WareHouseController();
         valid = new Validation();
         report = new Report();
     }
@@ -42,7 +40,7 @@ public class Service implements IService {
         while(true){
             Product newProduct = inputProduct(Status.NORMAL);
             // Add the new product to collection.
-            if (productManage.addProduct(newProduct)) {
+            if (productController.addProduct(newProduct)) {
                 System.out.println("Successfully add product: " + newProduct);
             }
             //The application asks to continuous create new product or go back to the main
@@ -57,7 +55,7 @@ public class Service implements IService {
         //✓ User requires enter the productCode
         String code = valid.inputAndCheckString("Enter code to update: ", Status.UPDATE);
         // get Product by code
-        Product oldProduct = productManage.getProductByCode(code);
+        Product oldProduct = productController.getProductByCode(code);
         
         if (oldProduct == null) {
             System.out.println("Product does not exist in system");
@@ -65,11 +63,11 @@ public class Service implements IService {
         } 
         // Otherwise, user can input update information of product to update that product.
         Product newProduct = inputProduct(Status.UPDATE);
-        newProduct = productManage.updateProduct(oldProduct, newProduct);
+        newProduct = productController.updateProduct(oldProduct, newProduct);
         System.out.println("Information of old product is change be: ");
         System.out.println(newProduct);
-        productManage.deleteProduct(oldProduct);
-        productManage.addProduct(oldProduct);
+        productController.deleteProduct(oldProduct);
+        productController.addProduct(oldProduct);
     }
 
     @Override
@@ -77,7 +75,7 @@ public class Service implements IService {
        //  Before the delete action is executed, the system must show confirm message.
         String code = valid.inputAndCheckString("Enter code to update: ",Status.NORMAL);
         // he result of the delete action must be shown with success or fail message.
-        Product productToDelete = productManage.getProductByCode(code);
+        Product productToDelete = productController.getProductByCode(code);
         
         if (productToDelete == null){
             System.out.println("Product does not exist in system");
@@ -93,7 +91,7 @@ public class Service implements IService {
 //            return;
 //        }
         // Remove the product from the list
-        boolean removalSuccess = productManage.deleteProduct(productToDelete);
+        boolean removalSuccess = productController.deleteProduct(productToDelete);
 
         if (removalSuccess) {
             System.out.println("Delete Success!");
@@ -104,8 +102,8 @@ public class Service implements IService {
 
     @Override
     public void showAllProduct() {
-        boolean option = valid.checkFileOrCollection("Do you want show by file or collection ( F / C)");
-        productManage.showAllProduct(option);
+        boolean option = valid.checkFileOrCollection("Do you want show by file or collection (F/C)");
+        productController.showAllProduct(option);
     }
     
     @Override
@@ -117,11 +115,11 @@ public class Service implements IService {
                 items.add(importProduct);
             }
         } while (valid.checkYesOrNo("Continue to add product (Y/N)? "));
-        int warehouseCode = wareHouseManage.getCode();
+        int warehouseCode = wareHouseController.getCode();
         Date currentDate = new Date();
         WareHouse warehouse = new WareHouse(warehouseCode, tradeType, currentDate, items);
 
-        if (wareHouseManage.addReceipt(warehouse)) {
+        if (wareHouseController.addReceipt(warehouse)) {
             System.out.println("Successfully added " + tradeType + " receipt with information:");
             System.out.println(warehouse);
         }
@@ -129,44 +127,47 @@ public class Service implements IService {
     
     @Override
     public void showProductExpired() {
-        List<Product> list = report.showProductExpired(productManage.getListProduct());
-        productManage.show(list);
+        List<Product> list = report.showProductExpired(productController.getListProduct());
+        productController.show(list);
     }
 
     @Override
     public void showProductSelling() {
-        List<Product> list = report.showProductSelling(productManage.getListProduct());
-        productManage.show(list);
+        List<Product> list = report.showProductSelling(productController.getListProduct());
+        productController.show(list);
     }
 
     @Override
     public void showProductRunningOut() {
-         List<Product> list = report.showProductRunningOut(productManage.getListProduct());
-        productManage.show(list);
+         List<Product> list = report.showProductRunningOut(productController.getListProduct());
+        productController.show(list);
     }
 
     @Override
     public void showReceiptProduct() {
         String code = valid.inputAndCheckString("Enter code product:", Status.NORMAL);
-        Product p = report.showReceiptProduct(code, productManage, wareHouseManage);
+        Product p = report.showReceiptProduct(code, productController, wareHouseController);
         System.out.println(p);
     }
 
     @Override
     public void loadData() {
-        productManage.loadData(fm.loadFromFile("product.dat"));
-        wareHouseManage.loadData(fm.loadFromFile("warehouse.dat"), productManage);
+        List<Product> productList = fm.importDataFromFile(productController.getProductFPath(), Product.class);
+        List<WareHouse> wareHouseList = fm.importDataFromFile(wareHouseController.getWareHouseFPath(), WareHouse.class);
+        
+        productController.setListProduct(productList);
+        wareHouseController.setWareHouseList(wareHouseList);
     }
 
     @Override
     public void saveData() {
-        fm.saveToFile(productManage.getListProduct(), "product.dat");        
-        fm.saveToFile(wareHouseManage.getAllReceipt(), "warehouse.dat");
+        fm.saveDataToFile(productController.getProductFPath(), productController.getListProduct());        
+        fm.saveDataToFile(wareHouseController.getWareHouseFPath(), wareHouseController.getWareHouseList());
     }
     
     private Product inputProduct(Status status) {
         // nhap code -> check data 
-        String code = valid.checkProductCodeExist("Enter code product: ", productManage.getListProduct(), status);
+        String code = valid.checkProductCodeExist("Enter code product: ", productController.getListProduct(), status);
         String name = valid.inputAndCheckString("Enter name product: ", status);
         int quanti = valid.checkInt("Enter quantity product", 0, Integer.MAX_VALUE, status);
         String type = valid.checkType("Enter type product: ", status);
@@ -185,15 +186,15 @@ public class Service implements IService {
     }
     
     private Product createProduct(TradeType tradeType) {
-        String productCode = valid.inputAndCheckString("Input product code:", Status.ADD);
+        String productCode = valid.inputAndCheckString("Input product code:", Status.NORMAL);
 
-        if (productManage.getProductByCode(productCode) == null) {
+        if (productController.getProductByCode(productCode) == null) {
             if (tradeType == TradeType.EXPORT) {
                 System.err.println("Product does not exist! Please enter again.");
                 return null;
             } else {
-                Product newProduct = inputProduct(Status.ADD);
-                if (productManage.addProduct(newProduct)){
+                Product newProduct = inputProduct(Status.NORMAL);
+                if (productController.addProduct(newProduct)){
                     System.out.println("Successfully added product!");
                     return newProduct;
                 } else {
@@ -201,7 +202,7 @@ public class Service implements IService {
                 }
             }
         } else {
-            Product existingProduct = productManage.getProductByCode(productCode);
+            Product existingProduct = productController.getProductByCode(productCode);
             return updateExistingProduct(existingProduct, tradeType);
         }
     }

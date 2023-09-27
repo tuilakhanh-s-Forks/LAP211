@@ -1,10 +1,12 @@
 package entities;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Bùi Đức Triệu
  */
-public abstract class Product {
+public abstract class Product implements Serializable {
     // product code, product name, manufacturing date,expiration date, and other attributes.
     private String productCode;
     private String productName;
@@ -52,9 +54,4 @@ public abstract class Product {
     public void setType(String type) {
         this.type = type;
     }
-
-    @Override
-    public String toString() {
-        return productCode+", "+productName+", "+quantity+", "+type;
-    } 
 }

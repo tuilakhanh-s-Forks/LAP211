@@ -9,21 +9,41 @@ import java.util.List;
  *
  * @author Bùi Đức Triệu
  */
-public class WareHouseManage implements IWareHouseManage {
+public class WareHouseController implements IWareHouseController {
 
     private List<WareHouse> wareHouseList;
+    private final String WAREHOUSE_FPATH = "warehouses.dat";
 
-    public WareHouseManage() {
+    public WareHouseController() {
         wareHouseList = new ArrayList<>();
     }
     
-    public WareHouseManage(List<WareHouse> wareHouseList) {
+    public WareHouseController(List<WareHouse> wareHouseList) {
         this.wareHouseList = wareHouseList;
+    }
+    
+    @Override
+    public String getWareHouseFPath() {
+        return WAREHOUSE_FPATH;
     }
     
     @Override
     public int getCode() {
         return 1000001 + wareHouseList.size();
+    }
+    
+    @Override
+    public List<WareHouse> getWareHouseList() {
+        return wareHouseList;
+    }
+    
+    @Override
+    public void setWareHouseList(List<WareHouse> wareHouseList) {
+        if (wareHouseList != null) {
+            this.wareHouseList = new ArrayList<>(wareHouseList); // Create a new list to avoid modifying the original list
+        } else {
+            throw new IllegalArgumentException("Product list cannot be null.");
+        }
     }
     
     @Override

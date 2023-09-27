@@ -1,6 +1,6 @@
 package view;
 
-import utils.Status;
+import entities.Status;
 import utils.Validation;
 
 /**
@@ -41,6 +41,6 @@ public class Menu {
         for (int i = 0; i < menu.length; i++)
             System.out.println((i+1) + ". " + menu[i]);
         
-        return valid.checkInt("Choose: ", 1, menu.length,Status.NONE);
+        return valid.checkInt("Choose: ", 1, menu.length,Status.NORMAL);
     }
 }

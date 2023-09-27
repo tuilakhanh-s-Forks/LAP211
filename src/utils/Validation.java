@@ -1,5 +1,6 @@
 package utils;
 
+import entities.Status;
 import utils.IValidation;
 import java.util.List;
 import entities.Product;
@@ -19,7 +20,7 @@ public class Validation implements IValidation{
     public String inputAndCheckString(String msg, Status status) {
         // vong lap su dung de nguoi dung nhap den khi dung 
         while (true) {
-            System.out.println(msg);
+            System.out.print(msg);
             String input = sc.next().trim();
             
             if(status.equals(Status.UPDATE) && input.isBlank()){
@@ -38,8 +39,6 @@ public class Validation implements IValidation{
     @Override
     public String checkProductCodeExist(String msg, List<Product> listProduct, Status status) {
         while (true) {
-            int flag = 0;
-            // NHAP ID DE CHECK 
             String id = inputAndCheckString(msg, status);
             
             boolean isDuplicate = listProduct.stream().anyMatch(item -> item.getCode().equals(id));

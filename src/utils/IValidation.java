@@ -1,7 +1,7 @@
 package utils;
 
+import entities.Status;
 import entities.Product;
-import entities.WareHouse;
 import java.util.List;
 
 /**

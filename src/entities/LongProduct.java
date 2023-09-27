@@ -42,11 +42,4 @@ public class LongProduct extends Product {
     public void setSupplier(String supplier) {
         this.supplier = supplier;
     }
-
-    @Override
-    public String toString() {
-        return super.toString() + ", " + manufacturingDate + ", " + expirationDate + ", " + this.supplier; 
-    }
-    
-    //P0001,ABC,2,Long,20/12/2003,10/10/2005
 }

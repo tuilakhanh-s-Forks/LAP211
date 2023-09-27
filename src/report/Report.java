@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import controller.ProductController;
-import controller.WareHouseManage;
+import controller.WareHouseController;
 
 /**
  *
@@ -106,11 +106,9 @@ public class Report implements IReport{
     }
 
     @Override
-    public Product showReceiptProduct(String code,ProductController pm,WareHouseManage whm) {
+    public Product showReceiptProduct(String code,ProductController pm,WareHouseController whm) {
         Product p = pm.getProductByCode(code);
-        return whm.getProductInWareHouse(p);
+        // Refactor
+        return null;
     }
-
-    
-    
 }

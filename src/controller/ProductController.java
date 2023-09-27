@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utils.FileManage;
+import utils.FileManager;
 
 /**
  *
@@ -18,17 +18,32 @@ import utils.FileManage;
 public class ProductController implements IProductController{
     
     private List<Product> listProduct;
-    private FileManage fileManage;
+    private FileManager fileManage;
+    private final String PRODUCT_FPATH = "products.dat";
     
     public ProductController(){
         listProduct = new ArrayList<>();
-        fileManage = new FileManage();
+        fileManage = new FileManager();
 
+    }
+    
+    @Override
+    public String getProductFPath() {
+        return PRODUCT_FPATH;
     }
     
     @Override
     public List<Product> getListProduct() {
         return listProduct;
+    }
+    
+    @Override
+    public void setListProduct(List<Product> listProduct) {
+        if (listProduct != null) {
+            this.listProduct = new ArrayList<>(listProduct); // Create a new list to avoid modifying the original list
+        } else {
+            throw new IllegalArgumentException("Product list cannot be null.");
+        }
     }
     
     @Override
@@ -109,31 +124,7 @@ public class ProductController implements IProductController{
     }
     
     public void showByFile(String pathFile) throws FileNotFoundException, IOException{
-        // P0001,ABC,2,Long,20/12/2003,10/10/2005 
-        // P0002,ABC,2,Daily,3.5,Small 
-        List<Product> listProductInFile = new ArrayList<>();
-        List<String> listData = fileManage.loadFromFile(pathFile);
-        for (String line : listData) {
-            String[] data = line.split(",");
-            String code = data[0];
-            String name = data[1];
-            int quanti = Integer.parseInt(data[2].substring(1));
-            String type = data[3].substring(1);
-            
-            Product newProduct;
-            
-            if (type.equals("Long")) {
-                String pDate = data[4];
-                String eDate = data[5];
-                String sup = data[6];
-                newProduct = new LongProduct(pDate,eDate,sup,code,name,quanti,type) {};
-            } else{
-                String size = data[5];
-                double unit = Double.parseDouble(data[4]);
-                newProduct = new DailyProduct(size,unit,code,name,quanti,type);
-            }
-            listProductInFile.add(newProduct);
-        }
+        List<Product> listProductInFile = fileManage.importDataFromFile(pathFile, Product.class);
         show(listProductInFile);
     }
     
@@ -142,32 +133,5 @@ public class ProductController implements IProductController{
             .filter(p -> p.getCode().equals(code))
             .findFirst()
             .orElse(null);
-    }
-    
-    
-    @Override
-    public void loadData(List<String> dataFile) {
-        for (String line : dataFile) {
-            String[] data = line.split(",");       
-            String code = data[0];
-            String name = data[1];
-            int quanti = Integer.parseInt(data[2].substring(1));
-            String type = data[3].substring(1);
-            
-            Product newProduct;
-            
-            if(type.equals("Long")){
-                String pDate = data[4];
-                String eDate = data[5];
-                String sup = data[6];
-                newProduct = new LongProduct(pDate,eDate,sup,code,name,quanti,type) {};
-            }else{
-                String size = data[5];
-                double unit = Double.parseDouble(data[4]);
-                newProduct = new DailyProduct(size,unit,code,name,quanti,type);
-            }
-            
-            listProduct.add(newProduct);
-        }
     }
 }

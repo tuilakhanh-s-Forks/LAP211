@@ -4,7 +4,6 @@
  */
 package controller;
 
-import entities.Product;
 import entities.WareHouse;
 import java.util.List;
 
@@ -12,8 +11,11 @@ import java.util.List;
  *
  * @author Bùi Đức Triệu
  */
-public interface IWareHouseManage {
+public interface IWareHouseController {
+    String getWareHouseFPath();
     int getCode();
+    List<WareHouse> getWareHouseList();
+    void setWareHouseList(List<WareHouse> wareHouseList);
     boolean addReceipt(WareHouse receipt);
     boolean isProductExist(String productCode);
 }
