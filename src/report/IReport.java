@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package report;
 
 import entities.Product;
@@ -12,7 +8,7 @@ import controller.WareHouseManage;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public interface IReport {
 

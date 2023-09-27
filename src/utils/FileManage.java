@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package utils;
 
 import java.io.BufferedReader;
@@ -15,16 +11,15 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public class FileManage implements IFileManage {
 
     @Override
-    public void saveToFile(List objList, String fileName) {
+    public void saveToFile(List<?> objList, String fileName) {
         try (FileWriter fw = new FileWriter(fileName)) {
-            
             for (Object obj : objList) {
-                fw.write(obj + "\n");
+                fw.write(obj.toString() + "\n");
             }
         } catch (IOException ex) {
             Logger.getLogger(FileManage.class.getName()).log(Level.SEVERE, null, ex);
@@ -44,8 +39,7 @@ public class FileManage implements IFileManage {
             }            
         } catch (IOException ex) {
             Logger.getLogger(FileManage.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        }    
         return result;
     }
     

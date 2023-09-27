@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package utils;
 
 import entities.Product;
@@ -10,7 +6,7 @@ import java.util.List;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public interface IValidation {
     String checkString(String msg,Status status);

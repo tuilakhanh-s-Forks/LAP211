@@ -17,7 +17,7 @@ import utils.Validation;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public class Service implements IService {
 
