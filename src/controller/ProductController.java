@@ -13,7 +13,7 @@ import utils.FileManage;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public class ProductController implements IProductController{
     
