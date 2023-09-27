@@ -1,44 +1,40 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entities;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public abstract class Product {
     // product code, product name, manufacturing date,expiration date, and other attributes.
-    private String code;
-    private String name;
+    private String productCode;
+    private String productName;
     private int quantity;
     private String type;
 
     public Product() {
     }
 
-    public Product(String code, String name, int quantity, String type) {
-        this.code = code;
-        this.name = name;
+    public Product(String productCode, String productName, int quantity, String type) {
+        this.productCode = productCode;
+        this.productName = productName;
         this.quantity = quantity;
         this.type = type;
     }
 
     public String getCode() {
-        return code;
+        return productCode;
     }
 
     public void setCode(String code) {
-        this.code = code;
+        this.productCode = code;
     }
 
     public String getName() {
-        return name;
+        return productName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.productName = name;
     }
 
     public int getQuantity() {
@@ -59,9 +55,6 @@ public abstract class Product {
 
     @Override
     public String toString() {
-        return code+", "+name+", "+quantity+", "+type;
-    }
-   
-    
-    
+        return productCode+", "+productName+", "+quantity+", "+type;
+    } 
 }

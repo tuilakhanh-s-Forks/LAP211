@@ -1,12 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entities;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public class DailyProduct extends Product {
     private String size;
@@ -41,6 +37,4 @@ public class DailyProduct extends Product {
     public String toString() {
         return super.toString() + ", " +unit+", "+size; 
     }
-    
-    
 }

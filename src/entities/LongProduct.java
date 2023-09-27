@@ -1,12 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entities;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public class LongProduct extends Product {
     private String manufacturingDate;
@@ -49,10 +45,8 @@ public class LongProduct extends Product {
 
     @Override
     public String toString() {
-        return super.toString() + ", " +manufacturingDate+", "+expirationDate+", "+this.supplier; 
+        return super.toString() + ", " + manufacturingDate + ", " + expirationDate + ", " + this.supplier; 
     }
     
     //P0001,ABC,2,Long,20/12/2003,10/10/2005
-    
-    
 }
