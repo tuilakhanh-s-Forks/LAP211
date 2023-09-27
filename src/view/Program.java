@@ -1,5 +1,6 @@
 package view;
 
+import entities.TradeType;
 import service.Service;
 
 /**
@@ -38,10 +39,10 @@ public class Program {
                     int c3 = Menu.getChoice(Menu.WAREHOUSE_MENU);
                     switch (c3) {
                         case 1:
-                            service.createExportReceipt();
+                            service.inputReceipt(TradeType.IMPORT);
                             break;
                         case 2:
-                            service.createImportReceipt();
+                            service.inputReceipt(TradeType.EXPORT);
                             break;
                     }
                     break;

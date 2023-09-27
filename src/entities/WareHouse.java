@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -9,33 +10,41 @@ import java.util.List;
 
 
 public class WareHouse {
-    private String code;
-    private String time;
-    
+    private int code;
+    private TradeType tradeType;
+    private Date timeStamp;
     private List<Product> listProduct;
 
-    public WareHouse(String code, String time, List<Product> listProduct) {
+    public WareHouse(int code, TradeType tradeType, Date time, List<Product> listProduct) {
         this.code = code;
-        this.time = time;
-        
+        this.timeStamp = time;
+        this.tradeType = tradeType;
         this.listProduct = listProduct;
     }
 
     
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
-
-    public String getTime() {
-        return time;
+    
+    public TradeType getTradeType() {
+        return tradeType;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setTradeType(TradeType tradeType) {
+        this.tradeType = tradeType;
+    }
+
+    public Date getTime() {
+        return timeStamp;
+    }
+
+    public void setTime(Date time) {
+        this.timeStamp = time;
     }
 
     public List<Product> getListProduct() {
@@ -48,7 +57,7 @@ public class WareHouse {
 
     @Override
     public String toString() {
-        String result = code+", "+time+", ";
+        String result = code+", "+timeStamp+", ";
         
         for(Product p : listProduct){
             String pCode = p.getCode();

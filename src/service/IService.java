@@ -1,5 +1,7 @@
 package service;
 
+import entities.TradeType;
+
 /**
  *
  * @author Bùi Đức Triệu
@@ -22,9 +24,8 @@ public interface IService {
     void addProduct();
     void updateProduct();
     void deleteProduct();
+    void inputReceipt(TradeType tradeType);
     void showAllProduct();
-    void createImportReceipt();
-    void createExportReceipt();
     void showProductExpired();
     void showProductSelling();
     void showProductRunningOut();

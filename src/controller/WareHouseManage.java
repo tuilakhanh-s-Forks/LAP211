@@ -11,62 +11,35 @@ import java.util.List;
  */
 public class WareHouseManage implements IWareHouseManage {
 
-    public List<WareHouse> listImport;
-    public List<WareHouse> listExport;
+    private List<WareHouse> wareHouseList;
 
     public WareHouseManage() {
-        listImport = new ArrayList<>();
-        listExport = new ArrayList<>();
+        wareHouseList = new ArrayList<>();
     }
-
+    
+    public WareHouseManage(List<WareHouse> wareHouseList) {
+        this.wareHouseList = wareHouseList;
+    }
+    
     @Override
-    public void createImportReceipt(WareHouse warehouse) {
-        listImport.add(warehouse);
+    public int getCode() {
+        return 1000001 + wareHouseList.size();
     }
-
+    
     @Override
-    public void createExportReceipt(WareHouse warehouse) {
-        listImport.add(warehouse);
+    public boolean addReceipt(WareHouse receipt) {
+        return wareHouseList.add(receipt);
     }
-
-    public Product getProductInWareHouse(Product p) {
-        List<WareHouse> allReceipts = new ArrayList<WareHouse>(listImport);
-        allReceipts.addAll(listExport);
-        
-        return allReceipts.stream()
-            .flatMap(receipt -> receipt.getListProduct().stream())
-            .filter(product -> product.equals(p))
-            .findFirst()
-            .orElse(null);
-    }
-
+    
     @Override
-    public void loadData(List<String> dataFile, ProductController pm) {
-        for (String line : dataFile) {
-            String[] info = line.split("[, ]");
-
-            String code = info[0].trim();
-
-            String date = info[1].trim();
-
-           
-            List<Product> items = new ArrayList<>();
-            for (int i = 3; i < info.length; i++) {
-                items.add(pm.getProductByCode(info[i].trim()));
-            }
-
-            WareHouse w = new WareHouse(code, date, items);
-            if (code.charAt(0) == 'I') {
-                listImport.add(w);
-            } else {
-                listExport.add(w);
+    public boolean isProductExist(String productCode) {
+        for(WareHouse wareHouse: wareHouseList){
+            for(Product product: wareHouse.getListProduct()){
+                if(product.getCode().equalsIgnoreCase(productCode)){
+                    return true;
+                }
             }
         }
-    }
-
-    public List<WareHouse> getAllReceipt() {
-        List<WareHouse> allReceipts = new ArrayList<WareHouse>(listImport);
-        allReceipts.addAll(listExport);
-        return allReceipts;
+        return false;
     }
 }

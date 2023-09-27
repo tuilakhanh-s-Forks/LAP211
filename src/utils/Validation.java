@@ -53,21 +53,6 @@ public class Validation implements IValidation{
     }
 
     @Override
-    public String checkReceiptCodeExist(String msg, List<WareHouse> listWareHouse) {
-        while (true) {
-            String id = inputAndCheckString(msg,Status.NONE);
-            
-            boolean isDuplicate = listWareHouse.stream().anyMatch(item -> item.getCode().equals(id));
-            
-            if (isDuplicate) {
-                System.err.println("Receipt code already exists! Please enter again.");
-            } else {
-                return id;
-            }
-        }
-    }
-
-    @Override
     public String checkBeforeDate(String msg, Status status) {
         String dateFormat = "MM/dd/yyyy";
         DateFormat sdf = new SimpleDateFormat(dateFormat);
@@ -199,7 +184,7 @@ public class Validation implements IValidation{
     @Override
     public boolean checkYesOrNo(String msg) {
         while (true) {
-            String input = inputAndCheckString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NORMAL);
             
             if (input.equalsIgnoreCase("Y")) {
                 return true;
@@ -214,7 +199,7 @@ public class Validation implements IValidation{
     @Override
     public boolean checkUpdateOrDelete(String msg) {
         while (true) {
-            String input = inputAndCheckString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NORMAL);
             
             if (input.equalsIgnoreCase("U")) {
                 return true;
@@ -229,7 +214,7 @@ public class Validation implements IValidation{
     @Override
     public boolean checkFileOrCollection(String msg) {
         while (true) {
-            String input = inputAndCheckString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NORMAL);
             if (input.equalsIgnoreCase("F")) {
                 return true;
             } else if (input.equalsIgnoreCase("C")) {
@@ -242,7 +227,7 @@ public class Validation implements IValidation{
     
     public boolean checkImportOrExport(String msg) {
         while (true) {
-            String input = inputAndCheckString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NORMAL);
             if (input.equalsIgnoreCase("I")) {
                 return true;
             } else if (input.equalsIgnoreCase("E")) {

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import controller.ProductController;
 import controller.WareHouseManage;
+import entities.TradeType;
+import java.util.Date;
 import report.Report;
 import utils.FileManage;
 import utils.Status;
@@ -23,14 +25,14 @@ public class Service implements IService {
 
     private final FileManage fm;
     private final ProductController productManage;
-    private final WareHouseManage warehouseManage;
+    private final WareHouseManage wareHouseManage;
     private final Validation valid;
     private final Report report;
 
     public Service() {
         fm = new FileManage();
         productManage = new ProductController();
-        warehouseManage = new WareHouseManage();
+        wareHouseManage = new WareHouseManage();
         valid = new Validation();
         report = new Report();
     }
@@ -38,7 +40,7 @@ public class Service implements IService {
     @Override
     public void addProduct() {
         while(true){
-            Product newProduct = inputProduct(Status.ADD);
+            Product newProduct = inputProduct(Status.NORMAL);
             // Add the new product to collection.
             if (productManage.addProduct(newProduct)) {
                 System.out.println("Successfully add product: " + newProduct);
@@ -73,7 +75,7 @@ public class Service implements IService {
     @Override
     public void deleteProduct() {
        //  Before the delete action is executed, the system must show confirm message.
-        String code = valid.inputAndCheckString("Enter code to update: ",Status.DELETE);
+        String code = valid.inputAndCheckString("Enter code to update: ",Status.NORMAL);
         // he result of the delete action must be shown with success or fail message.
         Product productToDelete = productManage.getProductByCode(code);
         
@@ -106,67 +108,25 @@ public class Service implements IService {
         productManage.showAllProduct(option);
     }
     
-    public WareHouse inputReceipt(boolean option){
-        // tạo code gồm 1 ký tự ban đầu là I đi kèm với 6 số tiếp theo và số này tự động tăng khi add hóa đơn 
-        String code = "";
-        if (option){
-            code+="I";// I 
-       
-        } else{
-            code+="E";// I 
+    @Override
+    public void inputReceipt(TradeType tradeType){
+        List<Product> items = new ArrayList<>();
+        do {
+            Product importProduct = createProduct(tradeType);
+            if (importProduct != null) {
+                items.add(importProduct);
+            }
+        } while (valid.checkYesOrNo("Continue to add product (Y/N)? "));
+        int warehouseCode = wareHouseManage.getCode();
+        Date currentDate = new Date();
+        WareHouse warehouse = new WareHouse(warehouseCode, tradeType, currentDate, items);
+
+        if (wareHouseManage.addReceipt(warehouse)) {
+            System.out.println("Successfully added " + tradeType + " receipt with information:");
+            System.out.println(warehouse);
         }
-        int end_code = warehouseManage.listImport.size() + 1; // 12001
-            if (end_code > 999999){
-                System.out.println("Warehouse Information Full !!!");
-            }
-            int number_zero = 7 - (end_code+"").length(); // 2 
-            String med = "";
-            for(int i = 1;i<=number_zero;i++){
-                med += "0";
-            }
-            code += (med + end_code);
-            // list hóa đơn 0 hóa đơn -> I000001
-            // list của hóa đơn có 12000 hóa đơn -> I0012001
-            // size của hóa đơn thì không thể lơn hơn 9999999
-        // lấy time hệ thống 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        String time = dtf.format(now);
-        // tạo một list Product 
-        List<Product> listProduct = new ArrayList<>();
-        
-        while(true){
-            String productCode = valid.inputAndCheckString("Enter code product: ", Status.ADD);
-            Product p = productManage.getProductByCode(productCode);
-            if(p == null){
-                System.out.println("Product does not exist in system");
-            }else if(listProduct.contains(p)){
-                System.out.println("Product does exist in receipt");
-            }else{
-                listProduct.add(p);
-                if(valid.checkYesOrNo("Do you want to continue add product in receipt ( Y / N)")){
-                    continue;
-                }
-                break;
-            }
-        }
-        
-        WareHouse importReceipt = new WareHouse(code,time,listProduct);
-        return importReceipt;
     }
     
-    @Override
-    public void createImportReceipt() {
-        WareHouse importReceipt = inputReceipt(valid.checkImportOrExport("Do you want create receipt import or export: ( I / E ) "));
-        warehouseManage.createImportReceipt(importReceipt);
-    }
-
-    @Override
-    public void createExportReceipt() {
-        WareHouse importReceipt = inputReceipt(valid.checkImportOrExport("Do you want create receipt import or export: ( I / E )"));
-        warehouseManage.createImportReceipt(importReceipt);
-    }
-
     @Override
     public void showProductExpired() {
         List<Product> list = report.showProductExpired(productManage.getListProduct());
@@ -187,21 +147,21 @@ public class Service implements IService {
 
     @Override
     public void showReceiptProduct() {
-        String code = valid.inputAndCheckString("Enter code product:", Status.NONE);
-        Product p = report.showReceiptProduct(code, productManage, warehouseManage);
+        String code = valid.inputAndCheckString("Enter code product:", Status.NORMAL);
+        Product p = report.showReceiptProduct(code, productManage, wareHouseManage);
         System.out.println(p);
     }
 
     @Override
     public void loadData() {
         productManage.loadData(fm.loadFromFile("product.dat"));
-        warehouseManage.loadData(fm.loadFromFile("warehouse.dat"), productManage);
+        wareHouseManage.loadData(fm.loadFromFile("warehouse.dat"), productManage);
     }
 
     @Override
     public void saveData() {
         fm.saveToFile(productManage.getListProduct(), "product.dat");        
-        fm.saveToFile(warehouseManage.getAllReceipt(), "warehouse.dat");
+        fm.saveToFile(wareHouseManage.getAllReceipt(), "warehouse.dat");
     }
     
     private Product inputProduct(Status status) {
@@ -223,4 +183,46 @@ public class Service implements IService {
             return new LongProduct(pDate,eDate,sup,code,name,quanti,type);    
         }
     }
+    
+    private Product createProduct(TradeType tradeType) {
+        String productCode = valid.inputAndCheckString("Input product code:", Status.ADD);
+
+        if (productManage.getProductByCode(productCode) == null) {
+            if (tradeType == TradeType.EXPORT) {
+                System.err.println("Product does not exist! Please enter again.");
+                return null;
+            } else {
+                Product newProduct = inputProduct(Status.ADD);
+                if (productManage.addProduct(newProduct)){
+                    System.out.println("Successfully added product!");
+                    return newProduct;
+                } else {
+                    return null;
+                }
+            }
+        } else {
+            Product existingProduct = productManage.getProductByCode(productCode);
+            return updateExistingProduct(existingProduct, tradeType);
+        }
+    }
+    
+    private Product updateExistingProduct(Product existingProduct, TradeType tradeType) {
+        int newQuantity;
+        if (tradeType == TradeType.EXPORT) {
+        while (true) {
+            newQuantity = valid.checkInt("Input quantity:", 0, Integer.MAX_VALUE, Status.NORMAL);
+            if (existingProduct.getQuantity() - newQuantity >= 0) {
+                break;
+            } else {
+                System.err.println("Not enough quantity to export! Please enter again.");
+            }
+        }
+        existingProduct.setQuantity(existingProduct.getQuantity() - newQuantity);
+        } else {
+            newQuantity = valid.checkInt("Input quantity:", 0, Integer.MAX_VALUE, Status.NORMAL);
+            existingProduct.setQuantity(existingProduct.getQuantity() + newQuantity);
+        }
+        return existingProduct;
+    }
+   
 }

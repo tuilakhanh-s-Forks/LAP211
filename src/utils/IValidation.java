@@ -13,8 +13,6 @@ public interface IValidation {
   
     String checkProductCodeExist(String msg, List<Product> listProduct,Status status);
 
-    String checkReceiptCodeExist(String msg, List<WareHouse> listWareHouse);
-
     String checkBeforeDate(String msg,Status status);
 
     String checkAfterDate(String msg, String pd,Status status);
