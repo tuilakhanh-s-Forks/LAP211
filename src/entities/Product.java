@@ -54,4 +54,9 @@ public abstract class Product implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("Product [Code: %s, Name: %s, Quantity: %s, Type: %s, ", productCode, productName, quantity, type);
+    } 
 }

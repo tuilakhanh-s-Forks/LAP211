@@ -55,4 +55,15 @@ public class WareHouse implements Serializable {
     public void setListProduct(List<Product> listProduct) {
         this.listProduct = listProduct;
     }
+    
+    @Override
+    public String toString() {
+        String result = code+", "+timeStamp+", ";
+        
+        for(Product p : listProduct){
+            String pCode = p.getCode();
+            result += (","+pCode);
+        }
+        return result;
+    }
 }

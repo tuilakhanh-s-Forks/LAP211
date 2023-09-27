@@ -1,5 +1,7 @@
 package utils;
 
+import entities.DailyProduct;
+import entities.LongProduct;
 import entities.Status;
 import utils.IValidation;
 import java.util.List;
@@ -21,13 +23,13 @@ public class Validation implements IValidation{
         // vong lap su dung de nguoi dung nhap den khi dung 
         while (true) {
             System.out.print(msg);
-            String input = sc.next().trim();
+            String input = sc.nextLine().trim();
             
             if(status.equals(Status.UPDATE) && input.isBlank()){
                 return input;
             }
-            // input == null or do dai = 0 => rong 
-            if (input == null || input.length() == 0) {
+            
+            if (input.isBlank()) {
                 System.err.println("Must input a string not empty !!!");
                 System.out.println("Please enter again!");
             } else {
@@ -236,6 +238,44 @@ public class Validation implements IValidation{
             }
         }
     }
+    
+    public Product checkUpdateProduct(Product oldProduct, Product newProduct) {
+        String code = newProduct.getCode();
+        String name = newProduct.getName();
+        int quantity = newProduct.getQuantity();
+        
+        if (code.isBlank()) {
+            newProduct.setCode(oldProduct.getCode());
+        }
+        if (name.isBlank()) {
+            newProduct.setName(oldProduct.getName());
+        }
+        if (quantity < 0) {
+            newProduct.setQuantity(oldProduct.getQuantity());
+        }
+        
+        // 1 trong 2 dang là 'Long' or 'Daily'
+        if (oldProduct instanceof LongProduct && newProduct instanceof LongProduct) {
+            LongProduct newLongProduct = (LongProduct) newProduct;
+            LongProduct oldLongProduct = (LongProduct) oldProduct;
+            if(newLongProduct.getManufacturingDate().isBlank()) {
+                newLongProduct.setManufacturingDate(oldLongProduct.getManufacturingDate());
+            }
+            if(newLongProduct.getExpirationDate().isBlank()) {
+                newLongProduct.setExpirationDate(oldLongProduct.getExpirationDate());
+            }
+        }
+        if(oldProduct instanceof DailyProduct && newProduct instanceof DailyProduct){
+            DailyProduct newDailyProduct = (DailyProduct) newProduct;
+            DailyProduct oldDailyProduct = (DailyProduct) oldProduct;
+            if(newDailyProduct.getSize().isBlank()) {
+                newDailyProduct.setSize(oldDailyProduct.getSize());
+            }
+            if(newDailyProduct.getUnit() == -1d) {
+                newDailyProduct.setUnit(oldDailyProduct.getUnit()); 
+            }
+        }
+        return newProduct;
+    }
 }
-
 

@@ -38,7 +38,7 @@ public class Service implements IService {
     @Override
     public void addProduct() {
         while(true){
-            Product newProduct = inputProduct(Status.NORMAL);
+            Product newProduct = inputProduct(Status.NORMAL, Optional.empty());
             // Add the new product to collection.
             if (productController.addProduct(newProduct)) {
                 System.out.println("Successfully add product: " + newProduct);
@@ -52,22 +52,29 @@ public class Service implements IService {
 
     @Override
     public void updateProduct() {
-        //✓ User requires enter the productCode
-        String code = valid.inputAndCheckString("Enter code to update: ", Status.UPDATE);
-        // get Product by code
-        Product oldProduct = productController.getProductByCode(code);
+        String oldCode = valid.inputAndCheckString("Enter code to update: ", Status.UPDATE);
+        Product oldProduct = productController.getProductByCode(oldCode);
         
         if (oldProduct == null) {
             System.out.println("Product does not exist in system");
             return;
         } 
         // Otherwise, user can input update information of product to update that product.
-        Product newProduct = inputProduct(Status.UPDATE);
-        newProduct = productController.updateProduct(oldProduct, newProduct);
+        Product newProduct = inputProduct(Status.UPDATE, Optional.of(oldProduct.getType()));
+        newProduct = valid.checkUpdateProduct(oldProduct, newProduct);
         System.out.println("Information of old product is change be: ");
         System.out.println(newProduct);
-        productController.deleteProduct(oldProduct);
-        productController.addProduct(oldProduct);
+        productController.updateProduct(oldProduct, newProduct);
+        System.out.println("Product updated successfully!");
+        if (wareHouseController.getWareHouseList().isEmpty())
+            return;
+        for (WareHouse wareHouse : wareHouseController.getWareHouseList()) {
+            for (Product product : wareHouse.getListProduct()) {
+                if (product.getCode().equals(oldCode)) {
+                    product = productController.getProductByCode(newProduct.getCode());
+                }
+            }
+        }
     }
 
     @Override
@@ -165,23 +172,28 @@ public class Service implements IService {
         fm.saveDataToFile(wareHouseController.getWareHouseFPath(), wareHouseController.getWareHouseList());
     }
     
-    private Product inputProduct(Status status) {
+    private Product inputProduct(Status status, Optional<String> oldType) {
         // nhap code -> check data 
         String code = valid.checkProductCodeExist("Enter code product: ", productController.getListProduct(), status);
         String name = valid.inputAndCheckString("Enter name product: ", status);
-        int quanti = valid.checkInt("Enter quantity product", 0, Integer.MAX_VALUE, status);
-        String type = valid.checkType("Enter type product: ", status);
+        int quantity = valid.checkInt("Enter quantity product: ", 0, Integer.MAX_VALUE, status);
+        String type;
+        if (status == Status.UPDATE) {
+            type = oldType.isPresent() ? oldType.get() : "";
+        } else {
+            type = valid.checkType("Enter type product: ", status);
+        }
         Product newProduct;
         if (type.equals("Daily")) {
             double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
-            String size = valid.checkSize("Enter size product: ", status);
-            return new DailyProduct(size, unit, code, name, quanti, type);
+            String size = valid.checkSize("Enter size product (Small/Medium/Large): ", status);
+            return new DailyProduct(size, unit, code, name, quantity, type);
 
         } else {
             String pDate = valid.checkBeforeDate("Enter production date: ", status);
             String eDate = valid.checkAfterDate("Enter end date: ", pDate, status);
             String sup = valid.inputAndCheckString("Enter the supplier: ", status);
-            return new LongProduct(pDate,eDate,sup,code,name,quanti,type);    
+            return new LongProduct(pDate,eDate,sup,code,name,quantity,type);    
         }
     }
     
@@ -193,7 +205,7 @@ public class Service implements IService {
                 System.err.println("Product does not exist! Please enter again.");
                 return null;
             } else {
-                Product newProduct = inputProduct(Status.NORMAL);
+                Product newProduct = inputProduct(Status.NORMAL, Optional.empty());
                 if (productController.addProduct(newProduct)){
                     System.out.println("Successfully added product!");
                     return newProduct;
@@ -225,5 +237,4 @@ public class Service implements IService {
         }
         return existingProduct;
     }
-   
 }

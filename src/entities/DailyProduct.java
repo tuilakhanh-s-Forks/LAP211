@@ -32,4 +32,9 @@ public class DailyProduct extends Product {
     public void setUnit(double unit) {
         this.unit = unit;
     }
+    
+    @Override
+    public String toString() {
+        return super.toString() + String.format("Size: %s, Unit: %,.2f]", size, unit);
+    }
 }

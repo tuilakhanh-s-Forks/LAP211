@@ -50,46 +50,15 @@ public class ProductController implements IProductController{
     public boolean addProduct(Product p) {
         return listProduct.add(p);
     }
-
+    
     @Override
-    public Product updateProduct(Product oldProduct, Product newProduct) {
-        String code = newProduct.getCode();
-        String type = newProduct.getType();
-        String name = newProduct.getName();
-        int quantity = newProduct.getQuantity();
-        
-        if (code.isBlank()) {
-            newProduct.setCode(oldProduct.getCode());
+    public void updateProduct(Product oldProduct,Product newProduct) {
+        if (oldProduct == null || !listProduct.contains(oldProduct)) {
+            System.out.println("Product does not exist in the system");
+            return;
         }
-        if (name.isBlank()) {
-            newProduct.setName(oldProduct.getName());
-        }
-        if (quantity < 0) {
-            newProduct.setQuantity(oldProduct.getQuantity());
-        }
-        
-        // 1 trong 2 dang là 'Long' or 'Daily'
-        if (oldProduct instanceof LongProduct && newProduct instanceof LongProduct) {
-            LongProduct newLongProduct = (LongProduct) newProduct;
-            LongProduct oldLongProduct = (LongProduct) oldProduct;
-            if(newLongProduct.getManufacturingDate().isBlank()) {
-                newLongProduct.setManufacturingDate(oldLongProduct.getManufacturingDate());
-            }
-            if(newLongProduct.getExpirationDate().isBlank()) {
-                newLongProduct.setExpirationDate(oldLongProduct.getExpirationDate());
-            }
-        }
-        if(oldProduct instanceof DailyProduct && newProduct instanceof DailyProduct){
-            DailyProduct newDailyProduct = (DailyProduct) newProduct;
-            DailyProduct oldDailyProduct = (DailyProduct) oldProduct;
-            if(newDailyProduct.getSize().isBlank()) {
-                newDailyProduct.setSize(oldDailyProduct.getSize());
-            }
-            if(newDailyProduct.getUnit() == -1d) {
-                newDailyProduct.setUnit(oldDailyProduct.getUnit()); 
-            }
-        }
-        return newProduct;
+        listProduct.remove(oldProduct);
+        listProduct.add(newProduct);
     }
 
     @Override
@@ -109,7 +78,7 @@ public class ProductController implements IProductController{
         if (option) {
             try {
                 System.out.println("-----List of all products in collection-----");
-                showByFile("product.dat");
+                showByFile(PRODUCT_FPATH);
             } catch (IOException ex) {
                 Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -129,6 +98,9 @@ public class ProductController implements IProductController{
     }
     
     public Product getProductByCode(String code){
+        if (listProduct.isEmpty()) {
+            return null;
+        }
         return listProduct.stream()
             .filter(p -> p.getCode().equals(code))
             .findFirst()

@@ -30,4 +30,6 @@ public interface IValidation {
     boolean checkUpdateOrDelete(String msg);
 
     boolean checkFileOrCollection(String msg);
+    
+    Product checkUpdateProduct(Product oldProduct, Product newProduct);
 }

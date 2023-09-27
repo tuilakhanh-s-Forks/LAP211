@@ -42,4 +42,9 @@ public class LongProduct extends Product {
     public void setSupplier(String supplier) {
         this.supplier = supplier;
     }
+    
+    @Override
+    public String toString() {
+        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s]", manufacturingDate, expirationDate);
+    }
 }
