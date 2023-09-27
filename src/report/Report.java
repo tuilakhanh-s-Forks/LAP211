@@ -13,8 +13,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import controller.ProductController;
 import controller.WareHouseController;
 
@@ -26,89 +24,63 @@ public class Report implements IReport{
 
     @Override
     public List<Product> showProductExpired(List<Product> listProduct) {
-        List<Product> listEx = new ArrayList<>();
-        String dateFormat = "MM/dd/yyyy";
-        DateFormat sdf = new SimpleDateFormat(dateFormat);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        String time = dtf.format(now); // thoi gian hien tai 
-        try {
-            Date now_time = sdf.parse(time); // time now 
+        List<Product> listExpired = new ArrayList<>();
+        Date currentTime = new Date();
             
-            for(Product p : listProduct){
-                if(p.getType().equals("Long")){
-                     LongProduct pl = (LongProduct)p;
-                     
-            Date end_time = sdf.parse(pl.getExpirationDate());
-            if(now_time.compareTo(end_time) > 0){
-                listEx.add(p);
-            }
+        for(Product product : listProduct){
+            if (product instanceof LongProduct) {
+                 LongProduct longProduct = (LongProduct) product;
+
+                if(longProduct.getExpirationDate().before(currentTime)){
+                    listExpired.add(product);
                 }
-               
-            
+            }
         }
-        } catch (ParseException ex) {
-            Logger.getLogger(Report.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return listEx;
-        
+        return listExpired;
     }
 
     @Override
     public List<Product> showProductSelling(List<Product> listProduct) {
-        List<Product> listEx = new ArrayList<>();
-        String dateFormat = "MM/dd/yyyy";
-        DateFormat sdf = new SimpleDateFormat(dateFormat);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        String time = dtf.format(now); // thoi gian hien tai 
-        try {
-            Date now_time = sdf.parse(time); // time now 
+        List<Product> listSelling = new ArrayList<>();
+        Date currentTime = new Date();
             
-            for(Product p : listProduct){
-                LongProduct pl = (LongProduct)p;
-            Date end_time = sdf.parse(pl.getExpirationDate());
-            if(now_time.compareTo(end_time) < 0 && pl.getQuantity() > 0){
-                listEx.add(p);
+        for(Product product : listProduct){
+            if (product instanceof LongProduct) {
+                LongProduct longProduct = (LongProduct) product;
+                Date manufacturingDate = longProduct.getManufacturingDate();
+                int quantity = longProduct.getQuantity();
+            
+                if(manufacturingDate.compareTo(currentTime) <= 0 && quantity > 0){
+                    listSelling.add(product);
+                }
             }
-            
         }
-        } catch (ParseException ex) {
-            Logger.getLogger(Report.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return listEx;
+        return listSelling;
     }
 
     @Override
     public List<Product> showProductRunningOut(List<Product> listProduct) {
-        List<Product> listEx = new ArrayList<>();
-        for(Product p : listProduct){
-              
-            if(p.getQuantity() < 3){
-                listEx.add(p);
-            }
-          
-    }
-       Comparator<Product> c = new Comparator<Product>(){
-            @Override
-            public int compare(Product o1, Product o2) {
-                if(o1.getQuantity() > o2.getQuantity()){
-                    return 1;
-                }else if(o1.getQuantity() < o2.getQuantity()){
-                    return -1;
+        List<Product> listRunningOut = new ArrayList<>();
+        for(Product product : listProduct) {
+            if (product instanceof LongProduct) {
+                LongProduct longProduct = (LongProduct) product;
+                int quantity = longProduct.getQuantity();
+                Date manufacturingDate = longProduct.getManufacturingDate();
+                Date expirationDate = longProduct.getExpirationDate();
+
+                if (quantity < 3 && manufacturingDate.compareTo(expirationDate) <= 0) {
+                    listRunningOut.add(longProduct);
                 }
-                return 0;
             }
-           
-       };
-       Collections.sort(listEx,c);
-       return listEx;
+        }
+       Collections.sort(listRunningOut, Comparator.comparingInt(Product::getQuantity));
+       return listRunningOut;
     }
 
     @Override
-    public Product showReceiptProduct(String code,ProductController pm,WareHouseController whm) {
+    public Product showReceiptProduct(String code, ProductController pm, WareHouseController whm) {
         Product p = pm.getProductByCode(code);
-        // Refactor
+        // Todo
         return null;
     }
 }

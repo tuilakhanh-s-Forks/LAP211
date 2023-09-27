@@ -135,20 +135,32 @@ public class Service implements IService {
     
     @Override
     public void showProductExpired() {
+        System.out.println("-----Products that have expired-----");
         List<Product> list = report.showProductExpired(productController.getListProduct());
-        productController.show(list);
+        for(Product product: list){
+            LongProduct longProduct = (LongProduct) product;
+            System.out.println(longProduct.toReportString());
+        }
     }
 
     @Override
     public void showProductSelling() {
+        System.out.println("-----Products that the store is selling-----");
         List<Product> list = report.showProductSelling(productController.getListProduct());
-        productController.show(list);
+        for(Product product: list){
+            LongProduct longProduct = (LongProduct) product;
+            System.out.println(longProduct.toReportString());
+        }
     }
 
     @Override
     public void showProductRunningOut() {
-         List<Product> list = report.showProductRunningOut(productController.getListProduct());
-        productController.show(list);
+        System.out.println("-----Products that are running out of stock-----");
+        List<Product> list = report.showProductRunningOut(productController.getListProduct());
+        for(Product product: list){
+            LongProduct longProduct = (LongProduct) product;
+            System.out.println(longProduct.toReportString());
+        }
     }
 
     @Override
@@ -184,7 +196,6 @@ public class Service implements IService {
         } else {
             type = valid.checkType("Enter type product: ", status);
         }
-        Product newProduct;
         if (type.equals("Daily")) {
             double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
             String size = valid.checkSize("Enter size product (Small/Medium/Large): ", status);

@@ -1,5 +1,7 @@
 package entities;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -47,6 +49,14 @@ public class LongProduct extends Product {
     
     @Override
     public String toString() {
-        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s]", manufacturingDate, expirationDate);
+        String pattern = "dd/MM/yyyy";
+        DateFormat sdf = new SimpleDateFormat(pattern);
+        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s]", sdf.format(manufacturingDate), sdf.format(expirationDate));
+    }
+    
+    public String toReportString() {
+        String pattern = "dd/MM/yyyy";
+        DateFormat sdf = new SimpleDateFormat(pattern);
+        return String.format("Product [Code: %s, Name: %s, Quantity: %s, Manufactoring Date: %s, Expiration Date: %s]", getCode(), getName(), getQuantity(), sdf.format(manufacturingDate), sdf.format(expirationDate));
     }
 }
