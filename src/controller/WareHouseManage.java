@@ -1,8 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package manage;
+package controller;
 
 import entities.Product;
 import entities.WareHouse;
@@ -11,7 +7,7 @@ import java.util.List;
 
 /**
  *
- * @author bravee06
+ * @author Bùi Đức Triệu
  */
 public class WareHouseManage implements IWareHouseManage {
 
@@ -26,7 +22,6 @@ public class WareHouseManage implements IWareHouseManage {
     @Override
     public void createImportReceipt(WareHouse warehouse) {
         listImport.add(warehouse);
-
     }
 
     @Override
@@ -37,19 +32,16 @@ public class WareHouseManage implements IWareHouseManage {
     public Product getProductInWareHouse(Product p) {
         List<WareHouse> allReceipts = new ArrayList<WareHouse>(listImport);
         allReceipts.addAll(listExport);
-        for (WareHouse receipt : allReceipts) {
-            List<Product> list = receipt.getListProduct();
-            for (Product p1 : list) {
-                if (p1.equals(p)) {
-                    return p;
-                }
-            }
-        }
-        return null;
+        
+        return allReceipts.stream()
+            .flatMap(receipt -> receipt.getListProduct().stream())
+            .filter(product -> product.equals(p))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
-    public void loadData(List<String> dataFile, ProductManage pm) {
+    public void loadData(List<String> dataFile, ProductController pm) {
         for (String line : dataFile) {
             String[] info = line.split("[, ]");
 

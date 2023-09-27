@@ -103,7 +103,6 @@ public class Validation implements IValidation{
             } catch (ParseException ex) {
                 continue;
             }
-
         }
     }
 

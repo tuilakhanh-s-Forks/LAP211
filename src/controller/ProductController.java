@@ -32,8 +32,8 @@ public class ProductController implements IProductController{
     }
     
     @Override
-    public void addProduct(Product p) {
-        listProduct.add(p);
+    public boolean addProduct(Product p) {
+        return listProduct.add(p);
     }
 
     @Override
@@ -93,11 +93,13 @@ public class ProductController implements IProductController{
         // true: file , false: collection 
         if (option) {
             try {
+                System.out.println("-----List of all products in collection-----");
                 showByFile("product.dat");
             } catch (IOException ex) {
                 Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
+            System.out.println("-----List of all products in product.dat-----");
             showByCollection();
         }
     }
@@ -125,7 +127,7 @@ public class ProductController implements IProductController{
                 String eDate = data[5];
                 String sup = data[6];
                 newProduct = new LongProduct(pDate,eDate,sup,code,name,quanti,type) {};
-            }else{
+            } else{
                 String size = data[5];
                 double unit = Double.parseDouble(data[4]);
                 newProduct = new DailyProduct(size,unit,code,name,quanti,type);

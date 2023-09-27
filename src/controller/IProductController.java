@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface IProductController {
     List<Product> getListProduct();
-    void addProduct(Product p);
+    boolean addProduct(Product p);
     Product updateProduct(Product oldProduct,Product newProduct);
     boolean deleteProduct(Product p);
     void showAllProduct(boolean option);
