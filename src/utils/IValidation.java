@@ -9,7 +9,7 @@ import java.util.List;
  * @author Bùi Đức Triệu
  */
 public interface IValidation {
-    String checkString(String msg,Status status);
+    String inputAndCheckString(String msg,Status status);
   
     String checkProductCodeExist(String msg, List<Product> listProduct,Status status);
 

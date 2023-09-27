@@ -16,7 +16,7 @@ public class Validation implements IValidation{
     private Scanner sc = new Scanner(System.in);
     
     @Override
-    public String checkString(String msg, Status status) {
+    public String inputAndCheckString(String msg, Status status) {
         // vong lap su dung de nguoi dung nhap den khi dung 
         while (true) {
             System.out.println(msg);
@@ -40,7 +40,7 @@ public class Validation implements IValidation{
         while (true) {
             int flag = 0;
             // NHAP ID DE CHECK 
-            String id = checkString(msg, status);
+            String id = inputAndCheckString(msg, status);
             
             boolean isDuplicate = listProduct.stream().anyMatch(item -> item.getCode().equals(id));
             
@@ -55,7 +55,7 @@ public class Validation implements IValidation{
     @Override
     public String checkReceiptCodeExist(String msg, List<WareHouse> listWareHouse) {
         while (true) {
-            String id = checkString(msg,Status.NONE);
+            String id = inputAndCheckString(msg,Status.NONE);
             
             boolean isDuplicate = listWareHouse.stream().anyMatch(item -> item.getCode().equals(id));
             
@@ -73,7 +73,7 @@ public class Validation implements IValidation{
         DateFormat sdf = new SimpleDateFormat(dateFormat);
         sdf.setLenient(false);
         while (true) {
-            String dateStr = checkString(msg,status);
+            String dateStr = inputAndCheckString(msg,status);
             try {
                 sdf.parse(dateStr);
                 return dateStr;
@@ -110,7 +110,7 @@ public class Validation implements IValidation{
     @Override
     public String checkType(String msg, Status status) {
         while(true){
-            String type = checkString(msg,status);
+            String type = inputAndCheckString(msg,status);
             
             if (!type.equalsIgnoreCase("Daily") && !type.equalsIgnoreCase("Long")) {
                 System.err.println("Please enter either 'Daily' or 'Long'. Please input again.");
@@ -123,7 +123,7 @@ public class Validation implements IValidation{
     @Override
     public String checkSize(String msg, Status status) {
         while(true){
-            String type = checkString(msg,status);
+            String type = inputAndCheckString(msg,status);
             
             if(!((type.equals("Small")) || (type.equals("Medium")) || (type.equals("Large")))){
                 System.err.println("Must input 1 in 3 size product is 'Small' or 'Medium' or 'Large' ! Please input again !");
@@ -138,7 +138,7 @@ public class Validation implements IValidation{
     // vong lap su dung de nguoi dung nhap den khi dung 
         while (true) {
             // allow user input a string 
-            String input_raw = checkString(msg,status);
+            String input_raw = inputAndCheckString(msg,status);
             
             if(input_raw.isBlank() && status.equals(Status.UPDATE)){
                 return -1;
@@ -167,7 +167,7 @@ public class Validation implements IValidation{
         while (true) {
 
             // allow user input a string 
-            String input_raw = checkString(msg,status);
+            String input_raw = inputAndCheckString(msg,status);
             if(input_raw.isBlank() && status.equals(Status.UPDATE)){
                 return -1;
             }
@@ -200,7 +200,7 @@ public class Validation implements IValidation{
     @Override
     public boolean checkYesOrNo(String msg) {
         while (true) {
-            String input = checkString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NONE);
             
             if (input.equalsIgnoreCase("Y")) {
                 return true;
@@ -215,7 +215,7 @@ public class Validation implements IValidation{
     @Override
     public boolean checkUpdateOrDelete(String msg) {
         while (true) {
-            String input = checkString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NONE);
             
             if (input.equalsIgnoreCase("U")) {
                 return true;
@@ -230,7 +230,7 @@ public class Validation implements IValidation{
     @Override
     public boolean checkFileOrCollection(String msg) {
         while (true) {
-            String input = checkString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NONE);
             if (input.equalsIgnoreCase("F")) {
                 return true;
             } else if (input.equalsIgnoreCase("C")) {
@@ -243,7 +243,7 @@ public class Validation implements IValidation{
     
     public boolean checkImportOrExport(String msg) {
         while (true) {
-            String input = checkString(msg,Status.NONE);
+            String input = inputAndCheckString(msg,Status.NONE);
             if (input.equalsIgnoreCase("I")) {
                 return true;
             } else if (input.equalsIgnoreCase("E")) {
