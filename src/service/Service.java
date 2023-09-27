@@ -51,13 +51,13 @@ public class Service implements IService {
     @Override
     public void updateProduct() {
         //✓ User requires enter the productCode
-        String code = valid.checkString("Enter code to update: ", Status.UPDATE);
-        // get Product by code 
+        String code = valid.inputAndCheckString("Enter code to update: ", Status.UPDATE);
+        // get Product by code
         Product oldProduct = productManage.getProductByCode(code);
         
-        if(oldProduct == null){
+        if (oldProduct == null) {
             System.out.println("Product does not exist in system");
-        }else{
+        } else {
             // Otherwise, user can input update information of product to update that product.
             Product newProduct = inputProduct(Status.UPDATE);
             newProduct = productManage.updateProduct(oldProduct, newProduct);
@@ -71,29 +71,29 @@ public class Service implements IService {
     @Override
     public void deleteProduct() {
        //  Before the delete action is executed, the system must show confirm message.
-        String code = valid.checkString("Enter code to update: ",Status.DELETE);
-        boolean flag = true;
+        String code = valid.inputAndCheckString("Enter code to update: ",Status.DELETE);
         // he result of the delete action must be shown with success or fail message.
         Product productToDelete = productManage.getProductByCode(code);
         
-        if(productToDelete == null){
-             System.out.println("Product does not exist in system");
-             flag = false;
+        if (productToDelete == null){
+            System.out.println("Product does not exist in system");
+            return;
         }//  only remove the product from the store's list when the import / export information for this product has not been generated.
-        else {
-            boolean productExistsInReceipt = warehouseManage.getProductInWareHouse(productToDelete) != null;
-            if (productExistsInReceipt) {
-                System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
-            } else {
-                // Remove the product from the list
-                boolean removalSuccess = productManage.deleteProduct(productToDelete);
+        boolean productExistsInReceipt = warehouseManage.getProductInWareHouse(productToDelete) != null;
+        if (productExistsInReceipt) {
+            System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
+            return;
+        }
+        if(!valid.checkYesOrNo("Are you sure you want to delete this product? (Y/N): ")){
+            return;
+        }
+        // Remove the product from the list
+        boolean removalSuccess = productManage.deleteProduct(productToDelete);
 
-                if (removalSuccess) {
-                    System.out.println("Delete Success!");
-                } else {
-                    System.out.println("Delete Fail");
-                }
-            }
+        if (removalSuccess) {
+            System.out.println("Delete Success!");
+        } else {
+            System.out.println("Delete Fail");
         }
     }
 
@@ -113,7 +113,7 @@ public class Service implements IService {
             code+="E";// I 
         }
         int end_code = warehouseManage.listImport.size() + 1; // 12001
-            if(end_code > 999999){
+            if (end_code > 999999){
                 System.out.println("Warehouse Information Full !!!");
             }
             int number_zero = 7 - (end_code+"").length(); // 2 
@@ -133,7 +133,7 @@ public class Service implements IService {
         List<Product> listProduct = new ArrayList<>();
         
         while(true){
-            String productCode = valid.checkString("Enter code product: ", Status.ADD);
+            String productCode = valid.inputAndCheckString("Enter code product: ", Status.ADD);
             Product p = productManage.getProductByCode(productCode);
             if(p == null){
                 System.out.println("Product does not exist in system");
@@ -150,10 +150,8 @@ public class Service implements IService {
         
         WareHouse importReceipt = new WareHouse(code,time,listProduct);
         return importReceipt;
-        
-       
-        
     }
+    
     @Override
     public void createImportReceipt() {
         WareHouse importReceipt = inputReceipt(valid.checkImportOrExport("Do you want create receipt import or export: ( I / E ) "));
@@ -186,7 +184,7 @@ public class Service implements IService {
 
     @Override
     public void showReceiptProduct() {
-        String code = valid.checkString("Enter code product:", Status.NONE);
+        String code = valid.inputAndCheckString("Enter code product:", Status.NONE);
         Product p = report.showReceiptProduct(code, productManage, warehouseManage);
         System.out.println(p);
     }
@@ -206,7 +204,7 @@ public class Service implements IService {
     private Product inputProduct(Status status) {
         // nhap code -> check data 
         String code = valid.checkProductCodeExist("Enter code product: ", productManage.getListProduct(), status);
-        String name = valid.checkString("Enter name product: ", status);
+        String name = valid.inputAndCheckString("Enter name product: ", status);
         int quanti = valid.checkInt("Enter quanti product", 0, Integer.MAX_VALUE, status);
         String type = valid.checkType("Enter type product: ", status);
         Product newProduct;
@@ -218,7 +216,7 @@ public class Service implements IService {
         } else {
             String pDate = valid.checkBeforeDate("Enter production date: ", status);
             String eDate = valid.checkAfterDate("Enter end date: ", pDate, status);
-            String sup = valid.checkString("Enter the supplier: ", status);
+            String sup = valid.inputAndCheckString("Enter the supplier: ", status);
             return new LongProduct(pDate,eDate,sup,code,name,quanti,type);    
         }
     }
