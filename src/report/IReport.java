@@ -7,8 +7,8 @@ package report;
 import entities.Product;
 import entities.WareHouse;
 import java.util.List;
-import manage.ProductManage;
-import manage.WareHouseManage;
+import controller.ProductController;
+import controller.WareHouseManage;
 
 /**
  *
@@ -22,6 +22,6 @@ public interface IReport {
 
     List<Product> showProductRunningOut(List<Product> listProduct);
 
-    Product showReceiptProduct(String code,ProductManage pm,WareHouseManage whm);
+    Product showReceiptProduct(String code,ProductController pm,WareHouseManage whm);
 
 }

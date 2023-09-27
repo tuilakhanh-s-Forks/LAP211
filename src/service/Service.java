@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package service;
 
 import entities.DailyProduct;
@@ -12,8 +8,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import manage.ProductManage;
-import manage.WareHouseManage;
+import controller.ProductController;
+import controller.WareHouseManage;
 import report.Report;
 import utils.FileManage;
 import utils.Status;
@@ -25,61 +21,41 @@ import utils.Validation;
  */
 public class Service implements IService {
 
-    FileManage fm = new FileManage();
-    ProductManage productManage = new ProductManage();
-    WareHouseManage warehouseManage = new WareHouseManage();
-    Validation valid = new Validation();
-    List<Product> listProduct = productManage.listProduct;
-    Report report = new Report();
+    private final FileManage fm;
+    private final ProductController productManage;
+    private final WareHouseManage warehouseManage;
+    private final Validation valid;
+    private final Report report;
 
-    public Product inputProduct(Status status) {
-        // nhap code -> check data 
-        String code = valid.checkProductCodeExist("Enter code product: ", listProduct, status);
-        String name = valid.checkString("Enter name product: ", status);
-        int quanti = valid.checkInt("Enter quanti product", 0, Integer.MAX_VALUE, status);
-        String type = valid.checkType("Enter type product: ", status);
-        if (type.equals("Daily")) {
-            double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
-            String size = valid.checkSize("Enter size product: ", status);
-            Product newProduct = new DailyProduct(size, unit, code, name, quanti, type);
-            return newProduct;
-
-        } else {
-            String pDate = valid.checkBeforeDate("Enter production date: ", status);
-            String eDate = valid.checkAfterDate("Enter end date: ", pDate, status);
-            String sup = valid.checkString("Enter the supplier: ", status);
-            Product newProduct =   new LongProduct(pDate,eDate,sup,code,name,quanti,type);
-
-            return newProduct;
-        }
-        
+    public Service() {
+        fm = new FileManage();
+        productManage = new ProductController();
+        warehouseManage = new WareHouseManage();
+        valid = new Validation();
+        report = new Report();
     }
 
     @Override
     public void addProduct() {
         while(true){
-             // submenu 
-        Product newProduct = inputProduct(Status.ADD);
-        // Add the new product to collection.
-        productManage.addProduct(newProduct);
-        //The application asks to continuous create new product or go back to the main
-        if(valid.checkYesOrNo("Do you want to continue to add product in the collection ( Y/N ) ")){
-            continue;
+            Product newProduct = inputProduct(Status.ADD);
+            // Add the new product to collection.
+            productManage.addProduct(newProduct);
+            //The application asks to continuous create new product or go back to the main
+            if(!valid.checkYesOrNo("Do you want to continue to add product in the collection ( Y/N ) ")){
+                break;
+            }
         }
-        break;
-        }
-       
-        
     }
 
     @Override
     public void updateProduct() {
-        
         //✓ User requires enter the productCode
         String code = valid.checkString("Enter code to update: ", Status.UPDATE);
         // get Product by code 
         Product oldProduct = productManage.getProductByCode(code);
-        if(oldProduct.equals(null)){
+        
+        if(oldProduct == null){
             System.out.println("Product does not exist in system");
         }else{
             // Otherwise, user can input update information of product to update that product.
@@ -87,13 +63,9 @@ public class Service implements IService {
             newProduct = productManage.updateProduct(oldProduct, newProduct);
             System.out.println("Information of old product is change be: ");
             System.out.println(newProduct);
-            listProduct.remove(oldProduct);
-            listProduct.add(oldProduct);
-        }
-        
-                
-                
-                
+            productManage.deleteProduct(oldProduct);
+            productManage.addProduct(oldProduct);
+        }  
     }
 
     @Override
@@ -102,19 +74,27 @@ public class Service implements IService {
         String code = valid.checkString("Enter code to update: ",Status.DELETE);
         boolean flag = true;
         // he result of the delete action must be shown with success or fail message.
-        Product p = productManage.getProductByCode(code);
-        if(p.equals(null)){
+        Product productToDelete = productManage.getProductByCode(code);
+        
+        if(productToDelete == null){
              System.out.println("Product does not exist in system");
              flag = false;
         }//  only remove the product from the store's list when the import / export information for this product has not been generated.
-        else if(warehouseManage.getProductInWareHouse(p) != null){
-            System.out.println("Product exist in receipt !");
-            flag = false;
+        else {
+            boolean productExistsInReceipt = warehouseManage.getProductInWareHouse(productToDelete) != null;
+            if (productExistsInReceipt) {
+                System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
+            } else {
+                // Remove the product from the list
+                boolean removalSuccess = productManage.deleteProduct(productToDelete);
+
+                if (removalSuccess) {
+                    System.out.println("Delete Success!");
+                } else {
+                    System.out.println("Delete Fail");
+                }
+            }
         }
-        productManage.deleteProduct(p);
-        if(flag) System.out.println("Delete Success!");
-        else System.out.println("Delete Fail");
-       
     }
 
     @Override
@@ -188,19 +168,19 @@ public class Service implements IService {
 
     @Override
     public void showProductExpired() {
-        List<Product> list = report.showProductExpired(listProduct);
+        List<Product> list = report.showProductExpired(productManage.getListProduct());
         productManage.show(list);
     }
 
     @Override
     public void showProductSelling() {
-         List<Product> list = report.showProductSelling(listProduct);
+        List<Product> list = report.showProductSelling(productManage.getListProduct());
         productManage.show(list);
     }
 
     @Override
     public void showProductRunningOut() {
-         List<Product> list = report.showProductRunningOut(listProduct);
+         List<Product> list = report.showProductRunningOut(productManage.getListProduct());
         productManage.show(list);
     }
 
@@ -219,9 +199,27 @@ public class Service implements IService {
 
     @Override
     public void saveData() {
-        fm.saveToFile(listProduct, "product.dat");        
+        fm.saveToFile(productManage.getListProduct(), "product.dat");        
         fm.saveToFile(warehouseManage.getAllReceipt(), "warehouse.dat");
     }
     
+    private Product inputProduct(Status status) {
+        // nhap code -> check data 
+        String code = valid.checkProductCodeExist("Enter code product: ", productManage.getListProduct(), status);
+        String name = valid.checkString("Enter name product: ", status);
+        int quanti = valid.checkInt("Enter quanti product", 0, Integer.MAX_VALUE, status);
+        String type = valid.checkType("Enter type product: ", status);
+        Product newProduct;
+        if (type.equals("Daily")) {
+            double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
+            String size = valid.checkSize("Enter size product: ", status);
+            return new DailyProduct(size, unit, code, name, quanti, type);
 
+        } else {
+            String pDate = valid.checkBeforeDate("Enter production date: ", status);
+            String eDate = valid.checkAfterDate("Enter end date: ", pDate, status);
+            String sup = valid.checkString("Enter the supplier: ", status);
+            return new LongProduct(pDate,eDate,sup,code,name,quanti,type);    
+        }
+    }
 }
