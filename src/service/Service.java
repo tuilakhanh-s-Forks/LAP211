@@ -40,10 +40,12 @@ public class Service implements IService {
         while(true){
             Product newProduct = inputProduct(Status.ADD);
             // Add the new product to collection.
-            productManage.addProduct(newProduct);
+            if (productManage.addProduct(newProduct)) {
+                System.out.println("Successfully add product: " + newProduct);
+            }
             //The application asks to continuous create new product or go back to the main
             if(!valid.checkYesOrNo("Do you want to continue to add product in the collection ( Y/N ) ")){
-                break;
+                return;
             }
         }
     }
@@ -57,15 +59,15 @@ public class Service implements IService {
         
         if (oldProduct == null) {
             System.out.println("Product does not exist in system");
-        } else {
-            // Otherwise, user can input update information of product to update that product.
-            Product newProduct = inputProduct(Status.UPDATE);
-            newProduct = productManage.updateProduct(oldProduct, newProduct);
-            System.out.println("Information of old product is change be: ");
-            System.out.println(newProduct);
-            productManage.deleteProduct(oldProduct);
-            productManage.addProduct(oldProduct);
-        }  
+            return;
+        } 
+        // Otherwise, user can input update information of product to update that product.
+        Product newProduct = inputProduct(Status.UPDATE);
+        newProduct = productManage.updateProduct(oldProduct, newProduct);
+        System.out.println("Information of old product is change be: ");
+        System.out.println(newProduct);
+        productManage.deleteProduct(oldProduct);
+        productManage.addProduct(oldProduct);
     }
 
     @Override
@@ -78,15 +80,16 @@ public class Service implements IService {
         if (productToDelete == null){
             System.out.println("Product does not exist in system");
             return;
-        }//  only remove the product from the store's list when the import / export information for this product has not been generated.
-        boolean productExistsInReceipt = warehouseManage.getProductInWareHouse(productToDelete) != null;
-        if (productExistsInReceipt) {
-            System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
-            return;
         }
-        if(!valid.checkYesOrNo("Are you sure you want to delete this product? (Y/N): ")){
-            return;
-        }
+        //  only remove the product from the store's list when the import / export information for this product has not been generated.
+//        boolean productExistsInReceipt = warehouseManage.getProductInWareHouse(productToDelete) != null;
+//        if (productExistsInReceipt) {
+//            System.out.println("Product exists in a warehouse receipt and cannot be deleted.");
+//            return;
+//        }
+//        if(!valid.checkYesOrNo("Are you sure you want to delete this product? (Y/N): ")){
+//            return;
+//        }
         // Remove the product from the list
         boolean removalSuccess = productManage.deleteProduct(productToDelete);
 
@@ -106,10 +109,10 @@ public class Service implements IService {
     public WareHouse inputReceipt(boolean option){
         // tạo code gồm 1 ký tự ban đầu là I đi kèm với 6 số tiếp theo và số này tự động tăng khi add hóa đơn 
         String code = "";
-        if(option){
+        if (option){
             code+="I";// I 
        
-        }else{
+        } else{
             code+="E";// I 
         }
         int end_code = warehouseManage.listImport.size() + 1; // 12001
@@ -205,7 +208,7 @@ public class Service implements IService {
         // nhap code -> check data 
         String code = valid.checkProductCodeExist("Enter code product: ", productManage.getListProduct(), status);
         String name = valid.inputAndCheckString("Enter name product: ", status);
-        int quanti = valid.checkInt("Enter quanti product", 0, Integer.MAX_VALUE, status);
+        int quanti = valid.checkInt("Enter quantity product", 0, Integer.MAX_VALUE, status);
         String type = valid.checkType("Enter type product: ", status);
         Product newProduct;
         if (type.equals("Daily")) {
