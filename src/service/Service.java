@@ -166,8 +166,14 @@ public class Service implements IService {
     @Override
     public void showReceiptProduct() {
         String code = valid.inputAndCheckString("Enter code product:", Status.NORMAL);
-        Product p = report.showReceiptProduct(code, productController, wareHouseController);
-        System.out.println(p);
+        List<Product> productReceipt = report.showReceiptProduct(code, productController, wareHouseController, fm);
+        if (productReceipt == null) {
+            System.out.println("Product does not exist.");
+            return;
+        }
+        for (Product p : productReceipt) {
+            System.out.println(p.toString());
+        }
     }
 
     @Override

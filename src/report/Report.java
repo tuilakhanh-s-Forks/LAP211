@@ -3,11 +3,6 @@ package report;
 import entities.LongProduct;
 import entities.Product;
 import entities.WareHouse;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import controller.ProductController;
 import controller.WareHouseController;
+import utils.FileManager;
 
 /**
  *
@@ -78,9 +74,27 @@ public class Report implements IReport{
     }
 
     @Override
-    public Product showReceiptProduct(String code, ProductController pm, WareHouseController whm) {
-        Product p = pm.getProductByCode(code);
-        // Todo
-        return null;
+    public List<Product> showReceiptProduct(String code, ProductController productController, WareHouseController wareHouseController, FileManager fm) {
+        List<Product> productReceipt = new ArrayList<>();
+        List<Product> productList = fm.importDataFromFile(productController.getProductFPath(), Product.class);
+        List<WareHouse> wareHouseList = fm.importDataFromFile(wareHouseController.getWareHouseFPath(), WareHouse.class);
+        
+        Product productCheck = productList.stream()
+            .filter(p -> p.getCode().equals(code))
+            .findFirst()
+            .orElse(null);
+        
+        if (productCheck == null) {
+            return null;
+        }
+        
+        for (WareHouse wareHouse : wareHouseList) {
+            for (Product product : wareHouse.getListProduct()) {
+                if (product.getCode().equals(code)) {
+                    productReceipt.add(product);
+                }
+            }
+        }
+        return productReceipt;
     }
 }

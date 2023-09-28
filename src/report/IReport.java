@@ -1,10 +1,10 @@
 package report;
 
 import entities.Product;
-import entities.WareHouse;
 import java.util.List;
 import controller.ProductController;
 import controller.WareHouseController;
+import utils.FileManager;
 
 /**
  *
@@ -18,6 +18,6 @@ public interface IReport {
 
     List<Product> showProductRunningOut(List<Product> listProduct);
 
-    Product showReceiptProduct(String code,ProductController pm,WareHouseController whm);
+    List<Product> showReceiptProduct(String code, ProductController productController, WareHouseController wareHouseController, FileManager fm);
 
 }
