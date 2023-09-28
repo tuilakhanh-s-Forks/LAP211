@@ -58,11 +58,11 @@ public class WareHouse implements Serializable {
     
     @Override
     public String toString() {
-        String result = code+", "+timeStamp+", ";
+        String result = code + ", " + timeStamp + ", ";
         
         for(Product p : listProduct){
             String pCode = p.getCode();
-            result += (","+pCode);
+            result += (", "+pCode);
         }
         return result;
     }

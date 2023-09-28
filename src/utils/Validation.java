@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class Validation implements IValidation{
 
     private Scanner sc = new Scanner(System.in);
-    private static final String DATE_FORMAT = "MM/dd/yyyy";
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final DateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
     
     @Override
@@ -75,8 +75,7 @@ public class Validation implements IValidation{
 
     @Override
     public Date checkAfterDate(String msg, Date productionDate, Status status) {
-        String dateFormat = "MM/dd/yyyy";
-        DateFormat sdf = new SimpleDateFormat(dateFormat);
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         sdf.setLenient(false);
         while (true) {
             Date initDate = checkBeforeDate(msg, status);

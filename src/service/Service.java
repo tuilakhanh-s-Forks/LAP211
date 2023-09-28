@@ -123,6 +123,9 @@ public class Service implements IService {
                 items.add(importProduct);
             }
         } while (valid.checkYesOrNo("Continue to add product (Y/N)? "));
+        if (items.isEmpty()) {
+            return;
+        }
         int warehouseCode = wareHouseController.getCode();
         Date currentDate = new Date();
         WareHouse warehouse = new WareHouse(warehouseCode, tradeType, currentDate, items);
@@ -216,7 +219,7 @@ public class Service implements IService {
     }
     
     private Product createProduct(TradeType tradeType) {
-        String productCode = valid.inputAndCheckString("Input product code:", Status.NORMAL);
+        String productCode = valid.inputAndCheckString("Input product code: ", Status.NORMAL);
 
         if (productController.getProductByCode(productCode) == null) {
             if (tradeType == TradeType.EXPORT) {
@@ -241,7 +244,7 @@ public class Service implements IService {
         int newQuantity;
         if (tradeType == TradeType.EXPORT) {
         while (true) {
-            newQuantity = valid.checkInt("Input quantity:", 0, Integer.MAX_VALUE, Status.NORMAL);
+            newQuantity = valid.checkInt("Input quantity: ", 0, Integer.MAX_VALUE, Status.NORMAL);
             if (existingProduct.getQuantity() - newQuantity >= 0) {
                 break;
             } else {
@@ -250,7 +253,7 @@ public class Service implements IService {
         }
         existingProduct.setQuantity(existingProduct.getQuantity() - newQuantity);
         } else {
-            newQuantity = valid.checkInt("Input quantity:", 0, Integer.MAX_VALUE, Status.NORMAL);
+            newQuantity = valid.checkInt("Input quantity: ", 0, Integer.MAX_VALUE, Status.NORMAL);
             existingProduct.setQuantity(existingProduct.getQuantity() + newQuantity);
         }
         return existingProduct;

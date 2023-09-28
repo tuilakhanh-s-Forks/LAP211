@@ -51,7 +51,7 @@ public class LongProduct extends Product {
     public String toString() {
         String pattern = "dd/MM/yyyy";
         DateFormat sdf = new SimpleDateFormat(pattern);
-        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s]", sdf.format(manufacturingDate), sdf.format(expirationDate));
+        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s, Supplier: %s]", sdf.format(manufacturingDate), sdf.format(expirationDate), supplier);
     }
     
     public String toReportString() {

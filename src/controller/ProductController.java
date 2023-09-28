@@ -77,13 +77,13 @@ public class ProductController implements IProductController{
         // true: file , false: collection 
         if (option) {
             try {
-                System.out.println("-----List of all products in collection-----");
+                System.out.println("-----List of all products in product.dat-----");
                 showByFile(PRODUCT_FPATH);
             } catch (IOException ex) {
                 Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            System.out.println("-----List of all products in product.dat-----");
+            System.out.println("-----List of all products in collection-----");
             showByCollection();
         }
     }
