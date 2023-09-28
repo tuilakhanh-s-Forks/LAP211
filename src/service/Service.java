@@ -82,7 +82,7 @@ public class Service implements IService {
     public void deleteProduct() {
        //  Before the delete action is executed, the system must show confirm message.
         String code = valid.inputAndCheckString("Enter code to update: ",Status.NORMAL);
-        // he result of the delete action must be shown with success or fail message.
+        // result of the delete action must be shown with success or fail message.
         Product productToDelete = productController.getProductByCode(code);
         
         if (productToDelete == null){
@@ -203,7 +203,7 @@ public class Service implements IService {
         if (status == Status.UPDATE) {
             type = oldType.isPresent() ? oldType.get() : "";
         } else {
-            type = valid.checkType("Enter type product: ", status);
+            type = valid.checkType("Enter type product(Daily/Long): ", status);
         }
         if (type.toLowerCase().equals("daily")) {
             double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
