@@ -1,7 +1,5 @@
 package controller;
 
-import entities.DailyProduct;
-import entities.LongProduct;
 import entities.Product;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,28 +13,28 @@ import utils.FileManager;
  *
  * @author Bùi Đức Triệu
  */
-public class ProductController implements IProductController{
-    
-    private List<Product> listProduct;
-    private FileManager fileManage;
+public class ProductController implements IProductController {
+
+    private List<Product> listProduct; // quan ly danh sach sp;
+    private FileManager fileManage; // nhap xuat
     private final String PRODUCT_FPATH = "products.dat";
-    
-    public ProductController(){
+
+    public ProductController() {
         listProduct = new ArrayList<>();
         fileManage = new FileManager();
 
     }
-    
+
     @Override
     public String getProductFPath() {
         return PRODUCT_FPATH;
     }
-    
+
     @Override
     public List<Product> getListProduct() {
         return listProduct;
     }
-    
+
     @Override
     public void setListProduct(List<Product> listProduct) {
         if (listProduct != null) {
@@ -45,14 +43,14 @@ public class ProductController implements IProductController{
             throw new IllegalArgumentException("Product list cannot be null.");
         }
     }
-    
+
     @Override
     public boolean addProduct(Product p) {
         return listProduct.add(p);
     }
-    
+
     @Override
-    public void updateProduct(Product oldProduct,Product newProduct) {
+    public void updateProduct(Product oldProduct, Product newProduct) {
         if (oldProduct == null || !listProduct.contains(oldProduct)) {
             System.out.println("Product does not exist in the system");
             return;
@@ -65,9 +63,9 @@ public class ProductController implements IProductController{
     public boolean deleteProduct(Product productToDelete) {
         return listProduct.remove(productToDelete);
     }
-    
-    public void show(List<Product> list){
-        for(Product p: list){
+
+    public void show(List<Product> list) {
+        for (Product p : list) {
             System.out.println(p);
         }
     }
@@ -87,23 +85,24 @@ public class ProductController implements IProductController{
             showByCollection();
         }
     }
-    
-    public void showByCollection(){
+
+    public void showByCollection() {
         show(listProduct);
     }
-    
-    public void showByFile(String pathFile) throws FileNotFoundException, IOException{
+
+    public void showByFile(String pathFile) throws FileNotFoundException, IOException {
         List<Product> listProductInFile = fileManage.importDataFromFile(pathFile, Product.class);
         show(listProductInFile);
     }
-    
-    public Product getProductByCode(String code){
+
+    public Product getProductByCode(String code) {
         if (listProduct.isEmpty()) {
             return null;
         }
         return listProduct.stream()
-            .filter(p -> p.getCode().equals(code))
-            .findFirst()
-            .orElse(null);
+                .filter(p -> p.getCode().equals(code))
+                .findFirst()
+                .orElse(null);
+        // for (Product p : list) { if(p.getCode == code) return code } return null;
     }
 }

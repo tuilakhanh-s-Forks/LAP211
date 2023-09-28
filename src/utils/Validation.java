@@ -67,7 +67,7 @@ public class Validation implements IValidation{
                 Date date = DATE_FORMATTER.parse(dateStr);
                 return date;
             } catch (ParseException e) {
-                System.err.println("Incorrect date. Please enter a valid date in the format MM/dd/yyyy.");
+                System.err.println("Incorrect date. Please enter a valid date in the format dd/MM/yyyy.");
             }
         }
 

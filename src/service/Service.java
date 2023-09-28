@@ -210,12 +210,13 @@ public class Service implements IService {
             String size = valid.checkSize("Enter size product (Small/Medium/Large): ", status);
             return new DailyProduct(size, unit, code, name, quantity, type);
 
-        } else {
+        } else if (type.equals("Long")) {
             Date pDate = valid.checkBeforeDate("Enter production date: ", status);
             Date eDate = valid.checkAfterDate("Enter end date: ", pDate, status);
             String sup = valid.inputAndCheckString("Enter the supplier: ", status);
             return new LongProduct(pDate,eDate,sup,code,name,quantity,type);    
         }
+        return null;
     }
     
     private Product createProduct(TradeType tradeType) {
