@@ -110,7 +110,7 @@ public class Service implements IService {
 
     @Override
     public void showAllProduct() {
-        boolean option = valid.checkFileOrCollection("Do you want show by file or collection (F/C): ");
+        boolean option = valid.checkFileOrCollection("Do you want show by file or collection (C/F): ");
         productController.showAllProduct(option);
     }
     
@@ -202,16 +202,16 @@ public class Service implements IService {
         } else {
             type = valid.checkType("Enter type product: ", status);
         }
-        if (type.equals("Daily")) {
+        if (type.toLowerCase().equals("daily")) {
             double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
             String size = valid.checkSize("Enter size product (Small/Medium/Large): ", status);
             return new DailyProduct(size, unit, code, name, quantity, type);
-
+            
         } else {
-            Date pDate = valid.checkBeforeDate("Enter production date: ", status);
-            Date eDate = valid.checkAfterDate("Enter end date: ", pDate, status);
+            Date pDate = valid.checkBeforeDate("Enter production date(MM/dd/yyyy): ", status);
+            Date eDate = valid.checkAfterDate("Enter end date(MM/dd/yyyy): ", pDate, status);
             String sup = valid.inputAndCheckString("Enter the supplier: ", status);
-            return new LongProduct(pDate,eDate,sup,code,name,quantity,type);    
+            return new LongProduct(pDate,eDate,sup,code,name,quantity,type);
         }
     }
     
