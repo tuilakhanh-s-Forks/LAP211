@@ -9,6 +9,7 @@ import java.util.Date;
  * @author Bùi Đức Triệu
  */
 public class LongProduct extends Product {
+
     private Date manufacturingDate;
     private Date expirationDate;
     private String supplier;
@@ -46,14 +47,14 @@ public class LongProduct extends Product {
     public void setSupplier(String supplier) {
         this.supplier = supplier;
     }
-    
+
     @Override
     public String toString() {
         String pattern = "dd/MM/yyyy";
         DateFormat sdf = new SimpleDateFormat(pattern);
         return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s, Supplier: %s]", sdf.format(manufacturingDate), sdf.format(expirationDate), supplier);
     }
-    
+
     public String toReportString() {
         String pattern = "dd/MM/yyyy";
         DateFormat sdf = new SimpleDateFormat(pattern);

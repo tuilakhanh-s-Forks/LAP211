@@ -12,10 +12,16 @@ import java.util.List;
  * @author Bùi Đức Triệu
  */
 public interface IWareHouseController {
+
     String getWareHouseFPath();
+
     int getCode();
+
     List<WareHouse> getWareHouseList();
+
     void setWareHouseList(List<WareHouse> wareHouseList);
+
     boolean addReceipt(WareHouse receipt);
+
     boolean isProductExist(String productCode);
 }

@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author Bùi Đức Triệu
  */
 public abstract class Product implements Serializable {
-    // product code, product name, manufacturing date,expiration date, and other attributes.
+
     private String productCode;
     private String productName;
     private int quantity;
@@ -54,9 +54,9 @@ public abstract class Product implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     @Override
     public String toString() {
         return String.format("Product [Code: %s, Name: %s, Quantity: %s, Type: %s, ", productCode, productName, quantity, type);
-    } 
+    }
 }

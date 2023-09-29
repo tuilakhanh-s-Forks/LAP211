@@ -209,7 +209,7 @@ public class Service implements IService {
             double unit = valid.checkDouble("Enter unit product: ", 0, Double.MAX_VALUE, status);
             String size = valid.checkSize("Enter size product (Small/Medium/Large): ", status);
             return new DailyProduct(size, unit, code, name, quantity, type);
-        } else if (type.equals("Long")) {
+        } else if (type.toLowerCase().equals("long")) {
             Date pDate = valid.checkBeforeDate("Enter production date(dd/MM/yyyy): ", status);
             Date eDate = valid.checkAfterDate("Enter end date(dd/MM/yyyy): ", pDate, status);
             String sup = valid.inputAndCheckString("Enter the supplier: ", status);
